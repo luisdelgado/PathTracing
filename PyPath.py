@@ -11,12 +11,13 @@ from random import random, gauss
 import array #for writing .ppm image file
 from winsound import Beep #for beep sound when complete
 from tkinter import * #for GUI
+from main import prop_dict
 
 #========================================#
 #==============CHANGE THESE==============#
 #Must be a string like the default below
 #and have .ppm extension as shown below
-FILENAME = 'PyPath_Output.ppm'
+FILENAME = prop_dict['output']
 #Must be a string like the default below
 DIRECTORY = 'C:\\Users\luish\ProgramasNovos\\'
 #==============CHANGE THESE==============#
@@ -146,7 +147,7 @@ def OrientedHemiDir(u1, u2, normal, exp):
 #Lambertian
 class BxDF:
     def __init__(self):
-        self.ke = BLACK #default, unless set with set_emission()
+        self.ke = RGBColour(prop_dict['ambient'], prop_dict['ambient'], prop_dict['ambient']) #default, unless set with set_emission() - change to ambient
     def set_emission(self, emission_colour):
         self.ke = emission_colour
     def get_emission(self):
@@ -325,7 +326,7 @@ class PathTraceIntegrator:
         self.primitives = []
     #trace light path
     def trace_ray(self, ray, depth):
-        result = RGBColour(0.0, 0.0, 0.0) #black
+        result = RGBColour(prop_dict['background'][0], prop_dict['background'][1], prop_dict['background'][2]) #black - change to background
         t = HUGEVALUE
         index = -1 #-1 means no hit
 
@@ -345,7 +346,7 @@ class PathTraceIntegrator:
                     index = i #closest primitive index number
 
         if index == -1: #No Hit
-            return BLACK
+            return RGBColour(prop_dict['background'][0], prop_dict['background'][1], prop_dict['background'][2])
         
         else: #Hit
             wo = ray.d * -1.0 #outgoing (towards camera)
@@ -492,6 +493,8 @@ blue_emitt = Lambertian(RGBColour(0.0, 0.0, 3.0))
 blue_emitt.set_emission(RGBColour(0.0, 0.0, 3.0))
 grey_emitt_plane = Lambertian(RGBColour(0.2, 0.2, 0.2))
 grey_emitt_plane.set_emission(RGBColour(0.2, 0.2, 0.2))
+white_emitt_plane = Lambertian(RGBColour(1.0, 1.0, 1.0)) # emitindo luz branca enquanto obj não está desenhado
+white_emitt_plane.set_emission(RGBColour(1.0, 1.0, 1.0)) # emitindo luz branca enquanto obj não está desenhado
 mirror = PerfectSpecular(RGBColour(1.0, 1.0, 1.0))
 glossy = GlossySpecular(RGBColour(0.2, 1.0, 0.3), 35.0)
 #sphere 1 - yellow main
@@ -516,15 +519,16 @@ plane_1.set_BxDF(ground_diff)
 path_tracer.add_primitive(plane_1)
 #plane 2 - top light
 plane_2 = Plane(Vector3D(0.0, 45.0, 0.0), Vector3D(0.0, -1.0, 0.0))
-plane_2.set_BxDF(grey_emitt_plane)
+plane_2.set_BxDF(white_emitt_plane) # trocado de cinza para branco
 path_tracer.add_primitive(plane_2)
 #Create Camera
-eye = Vector3D(-3.0, 0.0, 190.0) #higher z = more narrow view
+eye = Vector3D(prop_dict['eye'][0], prop_dict['eye'][1], prop_dict['eye'][2]) #higher z = more narrow view
+#eye = Vector3D(-3.0, 0.0, 190.0) # para testar
 focal = Vector3D(0.0, 0.0, 0.0)
 view_distance = 1000 #larger = more orthographic like
 up = Vector3D(0.0, 1.0, 0.0)
-height = 400
-width = 400
+height = int (prop_dict['size'][0])
+width = int (prop_dict['size'][1])
 spp = 128
 cam = Camera(eye, focal, view_distance, up, height, width, spp)
 cam.render(path_tracer) #trace scene and save image
