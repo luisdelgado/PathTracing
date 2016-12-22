@@ -19,7 +19,7 @@ from main import prop_dict
 #and have .ppm extension as shown below
 FILENAME = prop_dict['output']
 #Must be a string like the default below
-DIRECTORY = 'C:\\Users\luish\ProgramasNovos\\'
+DIRECTORY = 'C:\\Users\luish\ProgramasNovos\\' # alterar de acordo com computador
 #==============CHANGE THESE==============#
 #========================================#
 
