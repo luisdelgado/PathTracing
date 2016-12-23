@@ -75,7 +75,7 @@ class Read():
     def __get_faces(self, name):
         faces = []
 
-        f = open ('.\src\\' + name, 'r')
+        f = open ('./src//' + name, 'r')
 
         for line in f:
             # Pulando linhas em branco
@@ -100,7 +100,7 @@ class Read():
         vertices = []
         faces = []
 
-        f = open ('.\src\\' + name, 'r')
+        f = open ('./src//' + name, 'r')
 
         for line in f:
             # Pulando linhas em branco

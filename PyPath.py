@@ -9,7 +9,7 @@
 from math import sqrt, cos, sin
 from random import random, gauss
 import array #for writing .ppm image file
-from winsound import Beep #for beep sound when complete
+#from winsound import Beep #for beep sound when complete
 from tkinter import * #for GUI
 from main import prop_dict
 
@@ -19,7 +19,7 @@ from main import prop_dict
 #and have .ppm extension as shown below
 FILENAME = prop_dict['output']
 #Must be a string like the default below
-DIRECTORY = 'C:\\Users\luish\ProgramasNovos\\' # alterar de acordo com computador
+DIRECTORY = './' # alterar de acordo com computador
 #==============CHANGE THESE==============#
 #========================================#
 
@@ -480,7 +480,7 @@ class Camera:
         self.save_image(FILENAME) #FILENAME is define at top of source file
         #Play sound to signal a beep (For Windows)
         for i in range (1, 4):
-            Beep(i * 500, 250)
+           Beep(i * 500, 250)
         
 #-------------------------------------------------Main
 #Create Integrator
@@ -490,6 +490,9 @@ path_tracer = PathTraceIntegrator()
 
 red2_emit = Lambertian(RGBColour(1.0, 0.0, 0.0))
 red2_emit.set_emission(RGBColour(0.5, 0.0, 0.0))
+green_emit = Lambertian(RGBColour(0.0, 1.0, 0.0))
+green_emit.set_emission(RGBColour(0.0, 0.5, 0.0))
+
 
 
 gold_diff = Lambertian(RGBColour(1.0, 0.8, 0.3))
@@ -533,6 +536,9 @@ path_tracer.add_primitive(plane_2)
 plane_3 = Plane(Vector3D(-3.822, -3.8416, -16.59), Vector3D(124.237344, 0.0, 0.0))
 plane_3.set_BxDF(red2_emit) # trocado de cinza para branco
 path_tracer.add_primitive(plane_3)
+plane_4 = Plane(Vector3D(3.822, -3.8416, -32.76), Vector3D(-124.237344, 0.0, 0.0))
+plane_4.set_BxDF(green_emit) # trocado de cinza para branco
+path_tracer.add_primitive(plane_4)
 
 #Create Camera
 eye = Vector3D(prop_dict['eye'][0], prop_dict['eye'][1], prop_dict['eye'][2]) #higher z = more narrow view

@@ -5,7 +5,7 @@ from helper import read
 
 print("Lendo Arquivos de configuração e Objetos")
 
-file = ".\src\cornellroom.sdl"
+file = "./src/cornellroom.sdl"
 
 obj_types_list = ['object','quad', 'light']
 prop_types_list = ['eye', 'size', 'ortho', 'background', 'ambient', 'tonemapping', 'npaths', 'seed', 'output']
