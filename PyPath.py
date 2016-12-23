@@ -7,7 +7,7 @@
 
 #Modules
 from math import sqrt, cos, sin
-from random import random, gauss
+from random import random, gauss, randrange
 import array #for writing .ppm image file
 #from winsound import Beep #for beep sound when complete
 from tkinter import * #for GUI
@@ -26,7 +26,7 @@ DIRECTORY = './' # alterar de acordo com computador
 #Constants
 EPSILON = 0.0001
 HUGEVALUE = 1000000.0 #1 million
-MAXDEPTH = 1 #max ray bounces
+MAXDEPTH = 4 #max ray bounces
 PI = 3.1415926535897932384
 TWO_PI = 6.2831853071795864769
 INVERTED_PI = 0.3183098861837906912
@@ -488,11 +488,46 @@ path_tracer = PathTraceIntegrator()
 #Create Primitives w/ Materials
 #materials
 
-red2_emit = Lambertian(RGBColour(1.0, 0.0, 0.0))
-red2_emit.set_emission(RGBColour(0.5, 0.0, 0.0))
-green_emit = Lambertian(RGBColour(0.0, 1.0, 0.0))
-green_emit.set_emission(RGBColour(0.0, 0.5, 0.0))
+b = randrange(3)
+b = 0
 
+red2_emit = Lambertian(RGBColour(0.7, 0.0, 0.0))
+red2_emit.set_emission(RGBColour(1.0, 0.0, 0.0))
+green_emit = Lambertian(RGBColour(0.0, 0.7, 0.0))
+green_emit.set_emission(RGBColour(0.0, 1.0, 0.0))
+floor_emit = Lambertian(RGBColour(0.7, 0.7, 0.7))
+floor_emit.set_emission(RGBColour(1.0, 1.0, 1.0))
+white_emitt_plane = Lambertian(RGBColour(1.0, 1.0, 1.0)) # emitindo luz branca enquanto obj não está desenhado
+white_emitt_plane.set_emission(RGBColour(1.0, 1.0, 1.0)) # emitindo luz branca enquanto obj não está desenh
+
+if (b==0) :
+
+    red2_emit = Lambertian(RGBColour(0.7, 0.0, 0.0))
+    red2_emit.set_emission(RGBColour(1.0, 0.0, 0.0))
+    green_emit = Lambertian(RGBColour(0.0, 0.7, 0.0))
+    green_emit.set_emission(RGBColour(0.0, 1.0, 0.0))
+    floor_emit = Lambertian(RGBColour(0.7, 0.7, 0.7))
+    floor_emit.set_emission(RGBColour(1.0, 1.0, 1.0))
+
+
+if (b==1) :
+
+    red2_emit = PerfectSpecular(RGBColour(0.0, 0.0, 0.0))
+    red2_emit.set_emission(RGBColour(1.0, 0.0, 0.0))
+    green_emit = PerfectSpecular(RGBColour(0.0, 0.0, 0.0))
+    green_emit.set_emission(RGBColour(0.0, 1.0, 0.0))
+    floor_emit = PerfectSpecular(RGBColour(0.0, 0.0, 0.0))
+    floor_emit.set_emission(RGBColour(1.0, 1.0, 1.0))
+
+
+if (b==2) :
+
+    red2_emit = GlossySpecular(RGBColour(0.0, 0.0, 0.0), 0)
+    red2_emit.set_emission(RGBColour(1.0, 0.0, 0.0), 0)
+    green_emit = GlossySpecular(RGBColour(0.0, 0.0, 0.0), 0)
+    green_emit.set_emission(RGBColour(0.0, 1.0, 0.0))
+    floor_emit = GlossySpecular(RGBColour(0.0, 0.0, 0.7), 0)
+    floor_emit.set_emission(RGBColour(1.0, 1.0, 1.0))
 
 
 gold_diff = Lambertian(RGBColour(1.0, 0.8, 0.3))
@@ -503,8 +538,6 @@ blue_emitt = Lambertian(RGBColour(0.0, 0.0, 3.0))
 blue_emitt.set_emission(RGBColour(0.0, 0.0, 3.0))
 grey_emitt_plane = Lambertian(RGBColour(0.2, 0.2, 0.2))
 grey_emitt_plane.set_emission(RGBColour(0.2, 0.2, 0.2))
-white_emitt_plane = Lambertian(RGBColour(1.0, 1.0, 1.0)) # emitindo luz branca enquanto obj não está desenhado
-white_emitt_plane.set_emission(RGBColour(1.0, 1.0, 1.0)) # emitindo luz branca enquanto obj não está desenhado
 mirror = PerfectSpecular(RGBColour(1.0, 1.0, 1.0))
 glossy = GlossySpecular(RGBColour(0.2, 1.0, 0.3), 35.0)
 #sphere 1 - yellow main
@@ -521,6 +554,7 @@ sphere_3.set_BxDF(blue_emitt)
 path_tracer.add_primitive(sphere_3)
 #sphere 4 - mirror front
 sphere_4 = Sphere(Vector3D(4.0, -8.0, 20.0), 8.0)
+#sphere_4 = Sphere(Vector3D(3.411, -3.8416, -16.59), 2.0)
 sphere_4.set_BxDF(glossy)
 path_tracer.add_primitive(sphere_4)
 #plane 1 - bottom ground
@@ -534,11 +568,21 @@ plane_2.set_BxDF(white_emitt_plane) # trocado de cinza para branco
 path_tracer.add_primitive(plane_2)
 
 plane_3 = Plane(Vector3D(-3.822, -3.8416, -16.59), Vector3D(124.237344, 0.0, 0.0))
-plane_3.set_BxDF(red2_emit) # trocado de cinza para branco
+plane_3.set_BxDF(red2_emit) # esq
 path_tracer.add_primitive(plane_3)
 plane_4 = Plane(Vector3D(3.822, -3.8416, -32.76), Vector3D(-124.237344, 0.0, 0.0))
-plane_4.set_BxDF(green_emit) # trocado de cinza para branco
+plane_4.set_BxDF(green_emit) # dir
 path_tracer.add_primitive(plane_4)
+plane_5 = Plane(Vector3D(3.822, -3.8416, -16.59), Vector3D(0.0, 123.60347999999999, 0.0))
+plane_5.set_BxDF(floor_emit) # chao
+path_tracer.add_primitive(plane_5)
+plane_6 = Plane(Vector3D(-3.822, -3.8416, -32.76), Vector3D(0.0, 0.0, 58.730380800000006))
+plane_6.set_BxDF(floor_emit) # atras
+path_tracer.add_primitive(plane_6)
+plane_7 = Plane(Vector3D(3.822, 3.8416, -32.76), Vector3D(0.0, -123.60347999999999, 0.0))
+plane_7.set_BxDF(floor_emit) # chao
+path_tracer.add_primitive(plane_7)
+
 
 #Create Camera
 eye = Vector3D(prop_dict['eye'][0], prop_dict['eye'][1], prop_dict['eye'][2]) #higher z = more narrow view
@@ -550,7 +594,7 @@ up = Vector3D(0.0, 1.0, 0.0)
 #width = int (prop_dict['size'][1])
 height = 400
 width = 400
-spp = 128
+spp = int (prop_dict['npaths'])
 cam = Camera(eye, focal, view_distance, up, height, width, spp)
 cam.render(path_tracer) #trace scene and save image
 

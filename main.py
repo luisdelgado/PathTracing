@@ -2,6 +2,7 @@
 Responsavel por controlar o aplicativo
 """
 from helper import read
+from random import random, gauss, randrange
 
 print("Lendo Arquivos de configuração e Objetos")
 
@@ -37,7 +38,7 @@ for line in f:
 
 print("Lista de objetos: ", obj_list)
 print("Lista de propriedades: ", prop_dict)
-print(obj_list[1].vertices)
+print(obj_list[5].vertices)
 i = 0
 a = 0.0
 b = 0.0
@@ -45,19 +46,19 @@ c = 0.0
 ve = []
 p = []
 q = []
-for x in obj_list[1].faces:
-    print((obj_list[1].faces[i]))
-    ve = (obj_list[1].faces[i])
+for x in obj_list[5].faces:
+    print((obj_list[5].faces[i]))
+    ve = (obj_list[5].faces[i])
     d = 0
     i = i+1
     for j in ve:
         print(ve[d])
         if d == 0:
-            a = (obj_list[1].vertices[ve[d]-1])
+            a = (obj_list[5].vertices[ve[d]-1])
         if d == 1:
-            b = (obj_list[1].vertices[ve[d]-1])
+            b = (obj_list[5].vertices[ve[d]-1])
         if d == 2:
-            c = (obj_list[1].vertices[ve[d]-1])
+            c = (obj_list[5].vertices[ve[d]-1])
         d = d+1
     p = a - b
     q = a - c
@@ -66,5 +67,7 @@ for x in obj_list[1].faces:
     a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x
     n = p[1]*q[2] - p[2]*q[1], p[2]*q[0] - p[0]*q[2], p[0]*q[1] - p[1]*q[0]
     print(n)
+    b = randrange(3)
+    print(b)
 #print(str (obj_types_list['light'][0]))
 # Inicializando objetos da cena
