@@ -326,55 +326,57 @@ class PathTraceIntegrator:
         self.primitives = []
     #trace light path
     def trace_ray(self, ray, depth):
-        result = RGBColour(prop_dict['background'][0], prop_dict['background'][1], prop_dict['background'][2]) #black - change to background
-        t = HUGEVALUE
-        index = -1 #-1 means no hit
 
-        if depth > MAXDEPTH:
-            return result
+            result = RGBColour(prop_dict['background'][0], prop_dict['background'][1], prop_dict['background'][2]) #black - change to background
+            t = HUGEVALUE
+            index = -1 #-1 means no hit
 
-        #find closest hit object, its distance, hit_point and normal
-        #scan through primitives in scene, find closest
-        for i in range(0,  len(self.primitives)):
-            #intersect returns tuple of (bool hit, distance, hit_point, normal)
-            hit_data = self.primitives[i].intersect(ray)
-            if hit_data[0] == True: #Hit
-                if hit_data[1] < t: #Distance
-                    t = hit_data[1]
-                    hit_point = hit_data[2] #hit_point
-                    normal = hit_data[3] #normal
-                    index = i #closest primitive index number
+            if depth > MAXDEPTH:
+                return result
 
-        if index == -1: #No Hit
-            return RGBColour(prop_dict['background'][0], prop_dict['background'][1], prop_dict['background'][2])
-        
-        else: #Hit
-            wo = ray.d * -1.0 #outgoing (towards camera)
-            normal = orient_normal(normal, wo) #make normal point in correct direction
-            
-            #sample_f returns tuple (incoming direction, pdf)
-            shading_data = self.primitives[index].get_BxDF().sample_f(normal, wo)
-            wi = shading_data[0] #incoming direction
-            pdf = shading_data[1] #pdf
-            if pdf <= 0.0:
-                pdf = 1.0
-            
-            f = self.primitives[index].get_BxDF().f(wi, wo, normal)
-            incoming_ray = Ray(hit_point, wi) #make incoming to follow
+            #find closest hit object, its distance, hit_point and normal
+            #scan through primitives in scene, find closest
+            for i in range(0,  len(self.primitives)):
+                #intersect returns tuple of (bool hit, distance, hit_point, normal)
+                hit_data = self.primitives[i].intersect(ray)
+                if hit_data[0] == True: #Hit
+                    if hit_data[1] < t: #Distance
+                        t = hit_data[1]
+                        hit_point = hit_data[2] #hit_point
+                        normal = hit_data[3] #normal
+                        index = i #closest primitive index number
+
+            if index == -1: #No Hit
+                return RGBColour(prop_dict['background'][0], prop_dict['background'][1], prop_dict['background'][2])
+
+            else: #Hit
+                wo = ray.d * -1.0 #outgoing (towards camera)
+                normal = orient_normal(normal, wo) #make normal point in correct direction
+
+                #sample_f returns tuple (incoming direction, pdf)
+                shading_data = self.primitives[index].get_BxDF().sample_f(normal, wo)
+                wi = shading_data[0] #incoming direction
+                pdf = shading_data[1] #pdf
+                if pdf <= 0.0:
+                    pdf = 1.0
+
+                f = self.primitives[index].get_BxDF().f(wi, wo, normal)
+                incoming_ray = Ray(hit_point, wi) #make incoming to follow
 
 
-            #Russian Roulette
-            RR_prob = 0.66
-            if depth > 2:
-                if(random() < RR_prob): #2/3 chance we stop here
-                    return result
+                #Russian Roulette
+                RR_prob = 0.66
+                if depth > 2:
+                    if(random() < RR_prob): #2/3 chance we stop here
+                        return result
 
-            result = result + f.multiply(self.trace_ray(incoming_ray, depth + 1)) * Dot(wi, normal) / pdf
-            #Add emission
-            result = result + self.primitives[index].get_BxDF().get_emission()
-            result = result / RR_prob
-        return result #return final colour
-        
+                result = result + f.multiply(self.trace_ray(incoming_ray, depth + 1)) * Dot(wi, normal) / pdf
+                #result = (result + f.multiply(self.trace_ray(incoming_ray, depth + 1)) * Dot(wi, normal) / pdf)/2
+                #Add emission
+                result = result + self.primitives[index].get_BxDF().get_emission()
+                result = result / RR_prob
+            return result #return final colour
+
     #add objects
     def add_primitive(self, primitive):
         self.primitives.append(primitive)
@@ -485,6 +487,11 @@ class Camera:
 path_tracer = PathTraceIntegrator()
 #Create Primitives w/ Materials
 #materials
+
+red2_emit = Lambertian(RGBColour(1.0, 0.0, 0.0))
+red2_emit.set_emission(RGBColour(0.5, 0.0, 0.0))
+
+
 gold_diff = Lambertian(RGBColour(1.0, 0.8, 0.3))
 ground_diff = Lambertian(RGBColour(0.15, 0.15, 0.15))
 red_emitt = Lambertian(RGBColour(3.0, 0.0, 0.0))
@@ -518,17 +525,25 @@ plane_1 = Plane(Vector3D(0.0, -16.0, 0.0), Vector3D(0.0, 1.0, 0.0))
 plane_1.set_BxDF(ground_diff)
 path_tracer.add_primitive(plane_1)
 #plane 2 - top light
-plane_2 = Plane(Vector3D(0.0, 45.0, 0.0), Vector3D(0.0, -1.0, 0.0))
+#plane_2 = Plane(Vector3D(0.0, 45.0, 0.0), Vector3D(0.0, -1.0, 0.0))
+plane_2 = Plane(Vector3D(-0.91, 3.836, -23.324), Vector3D(0.0, -5.758479999999996, 0.0))
 plane_2.set_BxDF(white_emitt_plane) # trocado de cinza para branco
 path_tracer.add_primitive(plane_2)
+
+plane_3 = Plane(Vector3D(-3.822, -3.8416, -16.59), Vector3D(124.237344, 0.0, 0.0))
+plane_3.set_BxDF(red2_emit) # trocado de cinza para branco
+path_tracer.add_primitive(plane_3)
+
 #Create Camera
 eye = Vector3D(prop_dict['eye'][0], prop_dict['eye'][1], prop_dict['eye'][2]) #higher z = more narrow view
 #eye = Vector3D(-3.0, 0.0, 190.0) # para testar
 focal = Vector3D(0.0, 0.0, 0.0)
 view_distance = 1000 #larger = more orthographic like
 up = Vector3D(0.0, 1.0, 0.0)
-height = int (prop_dict['size'][0])
-width = int (prop_dict['size'][1])
+#height = int (prop_dict['size'][0])
+#width = int (prop_dict['size'][1])
+height = 400
+width = 400
 spp = 128
 cam = Camera(eye, focal, view_distance, up, height, width, spp)
 cam.render(path_tracer) #trace scene and save image
