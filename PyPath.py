@@ -9,7 +9,7 @@
 from math import sqrt, cos, sin
 from random import random, gauss, randrange
 import array #for writing .ppm image file
-#from winsound import Beep #for beep sound when complete
+from winsound import Beep #for beep sound when complete
 from tkinter import * #for GUI
 from main import prop_dict
 
@@ -26,7 +26,7 @@ DIRECTORY = './' # alterar de acordo com computador
 #Constants
 EPSILON = 0.0001
 HUGEVALUE = 1000000.0 #1 million
-MAXDEPTH = 4 #max ray bounces
+MAXDEPTH = 5 #max ray bounces
 PI = 3.1415926535897932384
 TWO_PI = 6.2831853071795864769
 INVERTED_PI = 0.3183098861837906912
