@@ -38,7 +38,7 @@ for line in f:
 
 print("Lista de objetos: ", obj_list)
 print("Lista de propriedades: ", prop_dict)
-print(obj_list[5].vertices)
+print(obj_list[0].vertices)
 i = 0
 a = 0.0
 b = 0.0

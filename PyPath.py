@@ -11,7 +11,7 @@ from random import random, gauss, randrange
 import array #for writing .ppm image file
 from winsound import Beep #for beep sound when complete
 from tkinter import * #for GUI
-from main import prop_dict
+from main import prop_dict, obj_list
 
 #========================================#
 #==============CHANGE THESE==============#
@@ -490,6 +490,38 @@ path_tracer = PathTraceIntegrator()
 
 b = randrange(3)
 b = 0
+
+#Adicionando primeiro obj
+i = 0
+a = 0.0
+b = 0.0
+c = 0.0
+ve = []
+p = []
+q = []
+for x in obj_list[5].faces:
+    print((obj_list[5].faces[i]))
+    ve = (obj_list[5].faces[i])
+    d = 0
+    i = i+1
+    for j in ve:
+        print(ve[d])
+        if d == 0:
+            a = (obj_list[5].vertices[ve[d]-1])
+        if d == 1:
+            b = (obj_list[5].vertices[ve[d]-1])
+        if d == 2:
+            c = (obj_list[5].vertices[ve[d]-1])
+        d = d+1
+    p = a - b
+    q = a - c
+    print(p)
+    print(q)
+    a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x
+    n = p[1]*q[2] - p[2]*q[1], p[2]*q[0] - p[0]*q[2], p[0]*q[1] - p[1]*q[0]
+    print(n)
+    b = randrange(3)
+    print(b)
 
 red2_emit = Lambertian(RGBColour(0.7, 0.0, 0.0))
 red2_emit.set_emission(RGBColour(1.0, 0.0, 0.0))
