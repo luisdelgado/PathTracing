@@ -492,36 +492,37 @@ b = randrange(3)
 b = 0
 
 #Adicionando primeiro obj
-i = 0
-a = 0.0
-b = 0.0
-c = 0.0
-ve = []
-p = []
-q = []
-for x in obj_list[5].faces:
-    print((obj_list[5].faces[i]))
-    ve = (obj_list[5].faces[i])
-    d = 0
-    i = i+1
-    for j in ve:
-        print(ve[d])
-        if d == 0:
-            a = (obj_list[5].vertices[ve[d]-1])
-        if d == 1:
-            b = (obj_list[5].vertices[ve[d]-1])
-        if d == 2:
-            c = (obj_list[5].vertices[ve[d]-1])
-        d = d+1
-    p = a - b
-    q = a - c
-    print(p)
-    print(q)
-    a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x
-    n = p[1]*q[2] - p[2]*q[1], p[2]*q[0] - p[0]*q[2], p[0]*q[1] - p[1]*q[0]
-    print(n)
-    b = randrange(3)
-    print(b)
+for tFaces in obj_list[0].faces :
+    i = 0
+    a = 0.0
+    b = 0.0
+    c = 0.0
+    ve = []
+    p = []
+    q = []
+    for x in obj_list[0].faces:
+        ve = (obj_list[0].faces[i])
+        d = 0
+        i = i+1
+        for j in ve:
+            print(ve[d])
+            if d == 0:
+                a = (obj_list[0].vertices[ve[d]-1])
+            if d == 1:
+                b = (obj_list[0].vertices[ve[d]-1])
+            if d == 2:
+                c = (obj_list[0].vertices[ve[d]-1])
+            d = d+1
+        p = a - b
+        q = a - c
+        a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x
+        n = p[1]*q[2] - p[2]*q[1], p[2]*q[0] - p[0]*q[2], p[0]*q[1] - p[1]*q[0]
+    white_emitt_plane = Lambertian(RGBColour(1.0, 1.0, 1.0))  # emitindo luz branca enquanto obj não está desenhado
+    white_emitt_plane.set_emission(RGBColour(1.0, 1.0, 1.0))  # emitindo luz branca enquanto obj não está desenhado
+    plane_2 = Plane(Vector3D(obj_list[0].vertices[0][0], obj_list[0].vertices[0][1], obj_list[0].vertices[0][2]), Vector3D(n[0], n[1], n[2]))
+    plane_2.set_BxDF(white_emitt_plane)  # trocado de cinza para branco
+    path_tracer.add_primitive(plane_2)
+
 
 red2_emit = Lambertian(RGBColour(0.7, 0.0, 0.0))
 red2_emit.set_emission(RGBColour(1.0, 0.0, 0.0))
@@ -595,9 +596,9 @@ plane_1.set_BxDF(ground_diff)
 path_tracer.add_primitive(plane_1)
 #plane 2 - top light
 #plane_2 = Plane(Vector3D(0.0, 45.0, 0.0), Vector3D(0.0, -1.0, 0.0))
-plane_2 = Plane(Vector3D(-0.91, 3.836, -23.324), Vector3D(0.0, -5.758479999999996, 0.0))
-plane_2.set_BxDF(white_emitt_plane) # trocado de cinza para branco
-path_tracer.add_primitive(plane_2)
+#plane_2 = Plane(Vector3D(-0.91, 3.836, -23.324), Vector3D(0.0, -5.758479999999996, 0.0))
+#plane_2.set_BxDF(white_emitt_plane) # trocado de cinza para branco
+#path_tracer.add_primitive(plane_2)
 
 plane_3 = Plane(Vector3D(-3.822, -3.8416, -16.59), Vector3D(124.237344, 0.0, 0.0))
 plane_3.set_BxDF(red2_emit) # esq

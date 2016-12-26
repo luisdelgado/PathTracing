@@ -69,5 +69,6 @@ for x in obj_list[5].faces:
     print(n)
     b = randrange(3)
     print(b)
+print(obj_list[0].vertices[0][0])
 #print(str (obj_types_list['light'][0]))
 # Inicializando objetos da cena
