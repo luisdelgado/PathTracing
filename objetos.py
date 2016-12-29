@@ -88,7 +88,6 @@ class Light():
         self.B = B # Vertice B
         self.C = C # Vertice C
         self.normal = Normal(A, B, C)
-        print('NORMAL' + str (self.normal))
         self.plane_constant = Dot(A, Normal(A, B, C))
         self.color = color
         self.lp = lp

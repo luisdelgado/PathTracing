@@ -1,4 +1,4 @@
-from Algebra import BLACK, Ray, Vector3D, Cross, Normalize
+from Algebra import BLACK, Ray, Vector3D, Cross, Normalize, tonemapping
 from random import random
 import array # para a imagem
 
@@ -93,8 +93,9 @@ class Camera:
                     sp_x = (x + random()) - (self.width / 2.0)
                     sp_y = (y + random()) - (self.height / 2.0)
                     ray.d = self.get_direction(sp_x, sp_y)
-                    pixel = pixel + integrator.trace_ray(ray, 1)
+                    pixel = pixel + integrator.trace_ray(ray, 5)
                 pixel = pixel / self.spp
+                tonemapping(pixel)
                 self.save_pixel(pixel, x, y)
             print((x / self.width) * 100, "%")
         # save image to file

@@ -1,70 +1,62 @@
 from Algebra import RGBColour
-from Algebra import BLACK, Vector3D, Cross, Normalize, Length, Dot
+from Algebra import BLACK, Vector3D, Cross, Normalize, Length, Dot, local_color, Ray
 from objetos import Objeto, Light, ObjectQuadric
+from random import random
 from math import pow
 
 
 class PathTraceIntegrator:
     background = BLACK # Cor do Background
+    ambient = 0.5
 
     #Initializer - creates object list
     def __init__(self):
         self.obj_list = []
 
+
     #trace light path
     def trace_ray(self, ray, depth):
-        result = self.background
+        difuso = BLACK
+        refletido = BLACK
 
         # Checando interseções com cada objeto
         dist = 50
+        hit = False
+        objeto = 1
+        hit_point = 1
+
         for obj in self.obj_list:
             inter = obj.intersect(ray)
-            hit = inter[0]
+            tmp_hit = inter[0]
             distance = inter[1]
 
-            if hit and distance < dist:
-
-                # Iluminação do objeto
-                result = obj.color
-
-                # Iluminação ambiente
-                from main import prop_dict
-                ia = float (prop_dict['ambient']) * float (obj.ka)
-                result = result + (RGBColour(ia, ia, ia))
-
-                # Iluminação difusa
-                p1 = Vector3D(0.0, -1.0, 0.0)
-                p2 = obj.normal
-
-                if (Length(p1)!= 1) :
-                    p1 = Normalize(p1)
-                    pass
-
-                if (Length(obj.normal)!= 1) :
-                    p2 = Normalize(obj.normal)
-                    pass
-
-                lv = 1.0 * float (obj.kd) * Dot(p1, p2)
-
-                result = result + (RGBColour(lv, lv, lv))
-
-                # Iluminação especular
-                p1 = Vector3D(p1.x * (-1), p1.y, p1.z)
-                from main import eye
-                p2 = eye
-
-                if (Length(p1)!= 1) :
-                    p1 = Normalize(p1)
-                    pass
-
-                if (Length(eye)!= 1) :
-                    p2 = Normalize(eye)
-                    pass
-
-                lv = 1.0 * float (obj.ks) * pow(Dot(p1, p2), float (obj.n))
-
-                result = result + (RGBColour(lv, lv, lv))
-
+            if tmp_hit and distance < dist:
                 dist = distance
+                objeto = obj
+                hit = tmp_hit
+                hit_point = inter[2]
 
-        return result
+        if hit:
+            result = local_color(objeto, ray, self.ambient)
+        else:
+            return self.background
+
+        if depth == 0 or isinstance(objeto, Light):
+                return result
+
+        # Calculando os Raios Secúndarios
+        ktot = obj.kd + obj.ks + obj.kt
+        L = ray.o - hit_point
+        N = objeto.normal
+        R = N * (Dot(N, L)) - L
+
+        new_ray = Ray(hit_point, R)
+        difuso = self.trace_ray(new_ray, depth - 1)
+
+
+        # Emitando Raio Difuso
+
+
+        # Emitindo Raio Difuso
+
+        return result + difuso*0.5 + refletido*0.5

@@ -79,6 +79,49 @@ def Parallelogram_Area(A, B, P):
 
     return Dot(v, s)
 
+def local_color(obj, ray, ambient):
+    # Iluminação do objeto
+    color = obj.color
+
+    # Iluminação ambiente
+    ia = ambient * float(obj.ka)
+    color = color + (RGBColour(ia, ia, ia))
+
+    # Iluminação difusa
+    p1 = Vector3D(0.0, -1.0, 0.0)
+    p2 = obj.normal
+
+    if (Length(p1) != 1):
+        p1 = Normalize(p1)
+
+    if (Length(obj.normal) != 1):
+        p2 = Normalize(obj.normal)
+
+    lv = 1.0 * float(obj.kd) * Dot(p1, p2)
+
+    color = color + (RGBColour(lv, lv, lv))
+
+    # Iluminação especular
+    p1 = Vector3D(p1.x * (-1), p1.y, p1.z)
+    p2 = ray.o
+
+    if (Length(p1) != 1):
+        p1 = Normalize(p1)
+
+    if (Length(ray.o) != 1):
+        p2 = Normalize(ray.o)
+
+    lv = 1.0 * float(obj.ks) * pow(Dot(p1, p2), float(obj.n))
+
+    color = color + (RGBColour(lv, lv, lv))
+
+    return color
+
+def tonemapping(pixel):
+    pixel.r = pixel.r / (pixel.r + 1)
+    pixel.g = pixel.g / (pixel.g + 1)
+    pixel.b = pixel.b / (pixel.b + 1)
+
 # -------------------------------------------------Ray class
 class Ray:
     # Initializer
@@ -130,6 +173,9 @@ class RGBColour:
 
     def repr(self):
         return "RGBColour ({},{},{})".format(self.r, self.g, self.b)
+
+
+
 
 # Constants
 BLACK = RGBColour(0.0, 0.0, 0.0)
