@@ -31,6 +31,9 @@ class Read():
     def seed(self,  values):
         return self.__get_float(values)
 
+    def deepth(self,  values):
+        return self.__get_int(values)
+
     def object(self, values):
         """
         :param values:
@@ -45,11 +48,13 @@ class Read():
                float(values[3]))
 
         # Demais propriedades do objeto
-        ka = values[4]
-        kd = values[5]
-        ks = values[6]
-        kt = values[7]
-        n = values[8]
+        ka = float(values[4])
+        kd = float(values[5])
+        ks = float(values[6])
+        kt = float(values[7])
+        n = int(values[8])
+        trans_difusa = float(values[9])
+        trans_especular = float(values[10])
 
         obj_list = []
 
@@ -58,7 +63,7 @@ class Read():
             B = vertices[f[1] - 1]
             C = vertices[f[2] - 1]
 
-            obj = Objeto(A,B,C, cor, ka, kd, ks, kt, n)
+            obj = Objeto(A, B, C, cor, ka, kd, ks, kt, n, trans_difusa, trans_especular)
             obj_list.append(obj)
 
         return obj_list
@@ -149,6 +154,11 @@ class Read():
         fst = value[0]
 
         return float(fst)
+
+    def __get_int(self, value):
+        fst = value[0]
+
+        return int(fst)
 
 # Checa o time e designa a função para retornar o valor formatado
 def read(t, values):

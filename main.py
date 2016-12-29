@@ -13,7 +13,7 @@ file = ".\src\cornellroom.sdl"
 DIRECTORY = './' # alterar de acordo com computador
 
 obj_types_list = ['object','quad', 'light']
-prop_types_list = ['eye', 'size', 'ortho', 'background', 'ambient', 'tonemapping', 'npaths', 'seed', 'output']
+prop_types_list = ['eye', 'size', 'ortho', 'background', 'ambient', 'tonemapping', 'npaths', 'seed', 'output', 'deepth']
 
 obj_list = []  # Lista de objetos a serem redenrizados
 prop_dict = {} # dicionario com propriedades da cena
@@ -59,7 +59,7 @@ cam = Camera(eye, focal, view_distance, up, height, width, spp)
 # Realiza o path tracing
 pathTracer = PathTraceIntegrator()
 pathTracer.obj_list = obj_list
-cam.render(pathTracer, FILENAME)
+cam.render(pathTracer, FILENAME, int(prop_dict["deepth"]), float(prop_dict["tonemapping"]))
 
 #-------------------------------------------------Temporary GUI
 #GUI using tkinter

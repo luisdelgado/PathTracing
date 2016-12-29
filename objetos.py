@@ -6,7 +6,7 @@ from Algebra import Dot, Vector3D, Normal, Normalize, Cross, Parallelogram_Area
 class Objeto:
     area = 0.0
 
-    def __init__(self, A, B, C, color, ka, kd,ks, kt, n):
+    def __init__(self, A, B, C, color, ka, kd,ks, kt, n, trans_difuso, trans_especular):
         """
         :param vertices - lista de vertices:
         :param faces: lista de Faces
@@ -28,6 +28,8 @@ class Objeto:
         self.ks = ks
         self.kt = kt
         self.n = n
+        self.trans_difuso = trans_difuso
+        self.trans_especular = trans_especular
 
     def intersect(self, ray):
 
@@ -45,6 +47,14 @@ class Objeto:
         # Calculando o ponto que pode está no plano do triangulo
         t = Dot(self.normal, (self.A - ray.o)) / Dot(ray_dir, self.normal)
         hit_point = ray.get_hitpoint(t)
+
+        if t < 0.0001:
+            # Raio nao intersecta o triangulo
+            hit = False
+            distance = 0.0
+            hit_point = Vector3D(0.0, 0.0, 0.0)
+
+            return (hit, distance, hit_point, self.normal)
 
         # Checando se o Ponto está dentro do triangulo
         # Inside-OutSide Test
