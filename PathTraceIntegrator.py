@@ -23,7 +23,8 @@ class PathTraceIntegrator:
         dist = 50
         hit = False
         objeto = 1
-        hit_point = 1
+        hit_point = Vector3D(0.0, 0.0, 0.0)
+        normal = Vector3D(0.0, 0.0, 0.0)
 
         for obj in self.obj_list:
             inter = obj.intersect(ray)
@@ -35,9 +36,10 @@ class PathTraceIntegrator:
                 objeto = obj
                 hit = tmp_hit
                 hit_point = inter[2]
+                normal = inter[3]
 
         if hit:
-            result = local_color(objeto, ray, self.ambient)
+            result = local_color(objeto, normal, ray, self.ambient)
         else:
             return self.background
 
@@ -51,7 +53,7 @@ class PathTraceIntegrator:
         if aleatorio < obj.kd:                            ## Raio Difuso
             x = random.random()
             y = random.random()
-            dir = random_direction(x, y, obj.normal)
+            dir = random_direction(x, y, normal)
 
             new_ray = Ray(hit_point, Normalize(dir))
             difuso = self.trace_ray(new_ray, depth - 1)
@@ -70,4 +72,4 @@ class PathTraceIntegrator:
 
         # Emitindo Raio Difuso
 
-        return result + difuso*0.5 + especular*0.5
+        return result + difuso + especular

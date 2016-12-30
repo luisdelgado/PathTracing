@@ -53,8 +53,6 @@ class Read():
         ks = float(values[6])
         kt = float(values[7])
         n = int(values[8])
-        trans_difusa = float(values[9])
-        trans_especular = float(values[10])
 
         obj_list = []
 
@@ -63,7 +61,7 @@ class Read():
             B = vertices[f[1] - 1]
             C = vertices[f[2] - 1]
 
-            obj = Objeto(A, B, C, cor, ka, kd, ks, kt, n, trans_difusa, trans_especular)
+            obj = Objeto(A, B, C, cor, ka, kd, ks, kt, n)
             obj_list.append(obj)
 
         return obj_list
@@ -90,7 +88,34 @@ class Read():
         return light_list
 
     def objectquadric(self, values):
-        print(values)
+        # Obtendo os vertices e faces que se encontram em arquivos separdos
+
+        a = float(values[0])
+        b = float(values[1])
+        c = float(values[2])
+        d = float(values[3])
+        e = float(values[4])
+        f = float(values[5])
+        g = float(values[6])
+        h = float(values[7])
+        j = float(values[8])
+        k = float(values[9])
+
+        # Lendo Cor
+        cor = RGBColour(float(values[10]),
+               float(values[11]),
+               float(values[12]))
+
+        # Demais propriedades do objeto
+        ka = float(values[13])
+        kd = float(values[14])
+        ks = float(values[15])
+        kt = float(values[16])
+        n = int(values[17])
+
+        quad = Objeto(a, b, c, d, e, f, g, h, j, k, cor, ka, kd, ks, kt, n)
+
+        return quad
 
     # Retorna a string contendo o nome do arquivo de saida
     def output(self,values):

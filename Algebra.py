@@ -104,7 +104,7 @@ def Parallelogram_Area(A, B, P):
 
     return Dot(v, s)
 
-def local_color(obj, ray, ambient):
+def local_color(obj, hit_normal, ray, ambient):
     # Iluminação do objeto
     color = obj.color
 
@@ -113,14 +113,14 @@ def local_color(obj, ray, ambient):
     color = color + (RGBColour(ia, ia, ia))
 
     # Iluminação difusa
-    p1 = Vector3D(0.0, -1.0, 0.0)
-    p2 = obj.normal
+    p1 = Normalize(flip_direction(ray.d))
+    p2 = hit_normal
 
     if (Length(p1) != 1):
         p1 = Normalize(p1)
 
-    if (Length(obj.normal) != 1):
-        p2 = Normalize(obj.normal)
+    if (Length(hit_normal) != 1):
+        p2 = Normalize(hit_normal)
 
     lv = 1.0 * float(obj.kd) * Dot(p1, p2)
 

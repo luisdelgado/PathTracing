@@ -2,11 +2,12 @@
 Classe que presenta cada objeto a ser mostrado na cena
 """
 from Algebra import Dot, Vector3D, Normal, Normalize, Cross, Parallelogram_Area
+from math import sqrt
 
 class Objeto:
     area = 0.0
 
-    def __init__(self, A, B, C, color, ka, kd,ks, kt, n, trans_difuso, trans_especular):
+    def __init__(self, A, B, C, color, ka, kd,ks, kt, n):
         """
         :param vertices - lista de vertices:
         :param faces: lista de Faces
@@ -21,15 +22,12 @@ class Objeto:
         self.B = B # Vertice B
         self.C = C # Vertice C
         self.normal = Normal(A, B, C)
-        self.plane_constant = Dot(A, Normal(A, B, C))
         self.color = color
         self.ka = ka
         self.kd = kd
         self.ks = ks
         self.kt = kt
         self.n = n
-        self.trans_difuso = trans_difuso
-        self.trans_especular = trans_especular
 
     def intersect(self, ray):
 
@@ -98,7 +96,6 @@ class Light():
         self.B = B # Vertice B
         self.C = C # Vertice C
         self.normal = Normal(A, B, C)
-        self.plane_constant = Dot(A, Normal(A, B, C))
         self.color = color
         self.lp = lp
 
@@ -145,5 +142,89 @@ class Light():
         return (hit, distance, hit_point, self.normal)
 
 class ObjectQuadric():
-    def __init__(self):
-        pass
+    def __init__(self, a, b, c, d, e, f, g, h, j, k, color, ka,
+                 kd, ks, kt, n):
+        self.a = a
+        self.b = b
+        self.c = c
+        self.d = d
+        self.e = e
+        self.f = f
+        self.g = g
+        self.h = h
+        self.j = j
+        self.k = k
+        self.color = color
+        self.ka = ka
+        self.kd = kd
+        self.ks = ks
+        self.kt = kt
+        self.n = n
+
+    def intersect(self, ray):
+        d = ray.d - ray.o
+
+        dx = d[0]
+        dy = d[1]
+        dz = d[2]
+
+        x0 = ray.o[0]
+        y0 = ray.o[1]
+        z0 = ray.o[2]
+
+        acoef = 2 * self.f * dx * dz + 2 * self.e * dy * dz + self.c * dz * dz + self.b * dy * dy + self.a * dx * dx + 2 * d * dx * dy
+
+        bcoef = (2 * self.b * y0 * dy + 2 * self.a * x0 * dx + 2 * self.c * z0 * dz) + \
+                (2 * self.h * dy + 2 * self.g * dx + 2 * self.j * dz + 2 * d * x0 * dy) + \
+                (2 * self.e * y0 * dz + 2 * self.e * z0 * dy + 2 * d * y0 * dx) + \
+                (2 * self.f * x0 * dz + 2 * self.f * z0 * dx)
+
+        ccoef = (self.a * x0 * x0 + 2 * self.g * x0 + 2 * self.f * x0 * z0 + self.b * y0 * y0) + \
+                (2 * self.e * y0 * z0 + 2 * d * x0 * y0 + self.c * z0 * z0 + 2 * self.h * y0) + \
+                (2 * self.j * z0 + self.k)
+
+        ## The following was modified by David J. Brandow to allow for planar
+
+        ## quadrics
+        if 1.0 + acoef == 1.0:
+            if 1.0 + bcoef == 1.0:
+                hit = False
+                distance = 0.0
+                hit_point = Vector3D(0.0, 0.0, 0.0)
+
+                return (hit, distance, hit_point, self.normal)
+
+            t = (-ccoef) / (bcoef)
+        else:
+            disc = bcoef * bcoef - 4 * acoef * ccoef
+
+            if 1.0 + disc < 1.0:
+                hit = False
+                distance = 0.0
+                hit_point = Vector3D(0.0, 0.0, 0.0)
+
+                return (hit, distance, hit_point, self.normal)
+
+            root = sqrt(disc)
+            t = (-bcoef - root) / (acoef + acoef)
+
+            if t < 0.0:
+                t = (-bcoef + root) / (acoef + acoef)
+
+        if (t < 0.001):
+            hit = False
+            distance = 0.0
+            hit_point = Vector3D(0.0, 0.0, 0.0)
+
+            return (hit, distance, hit_point, self.normal)
+
+        return (True, t, Vector3D(0.0, 0.0, 0.0), Vector3D(0.0, 0.0, 0.0))
+
+
+        # Didn't hit the Quadradic
+        #hit = False
+        #distance = 0.0
+        #hit_point = Vector3D(0.0, 0.0, 0.0)
+
+        #return (hit, distance, hit_point, self.normal)
+
