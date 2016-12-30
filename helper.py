@@ -53,6 +53,8 @@ class Read():
         ks = float(values[6])
         kt = float(values[7])
         n = int(values[8])
+        trans_difusa = float(values[9])
+        trans_especular = float(values[10])
 
         obj_list = []
 
@@ -61,7 +63,7 @@ class Read():
             B = vertices[f[1] - 1]
             C = vertices[f[2] - 1]
 
-            obj = Objeto(A, B, C, cor, ka, kd, ks, kt, n)
+            obj = Objeto(A, B, C, cor, ka, kd, ks, kt, n, trans_difusa, trans_especular)
             obj_list.append(obj)
 
         return obj_list
@@ -112,8 +114,10 @@ class Read():
         ks = float(values[15])
         kt = float(values[16])
         n = int(values[17])
+        trans_difusa = float(values[18])
+        trans_especular = int(values[19])
 
-        quad = Objeto(a, b, c, d, e, f, g, h, j, k, cor, ka, kd, ks, kt, n)
+        quad = Objeto(a, b, c, d, e, f, g, h, j, k, cor, ka, kd, ks, kt, n, trans_difusa, trans_especular)
 
         return quad
 

@@ -67,9 +67,4 @@ class PathTraceIntegrator:
         else:                                               ## Raio Transmitido
             pass
 
-        # Emitando Raio Difuso
-
-
-        # Emitindo Raio Difuso
-
-        return result + difuso + especular
+        return result + difuso*objeto.trans_difusa + especular*objeto.trans_especular

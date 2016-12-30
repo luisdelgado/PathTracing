@@ -7,7 +7,7 @@ from math import sqrt
 class Objeto:
     area = 0.0
 
-    def __init__(self, A, B, C, color, ka, kd,ks, kt, n):
+    def __init__(self, A, B, C, color, ka, kd,ks, kt, n, trans_difusa, trans_especular):
         """
         :param vertices - lista de vertices:
         :param faces: lista de Faces
@@ -28,6 +28,8 @@ class Objeto:
         self.ks = ks
         self.kt = kt
         self.n = n
+        self.trans_difusa = trans_difusa
+        self.trans_especular = trans_especular
 
     def intersect(self, ray):
 
@@ -143,7 +145,7 @@ class Light():
 
 class ObjectQuadric():
     def __init__(self, a, b, c, d, e, f, g, h, j, k, color, ka,
-                 kd, ks, kt, n):
+                 kd, ks, kt, n, trans_difusa, trans_especular):
         self.a = a
         self.b = b
         self.c = c
@@ -160,6 +162,8 @@ class ObjectQuadric():
         self.ks = ks
         self.kt = kt
         self.n = n
+        self.trans_difusa = trans_difusa
+        self.trans_especular = trans_especular
 
     def intersect(self, ray):
         d = ray.d - ray.o
@@ -218,7 +222,10 @@ class ObjectQuadric():
 
             return (hit, distance, hit_point, self.normal)
 
-        return (True, t, Vector3D(0.0, 0.0, 0.0), Vector3D(0.0, 0.0, 0.0))
+        hit_point = ray.get_hitpoint(t)
+        normal = hit_point - Vector3D(self.a, self.b, self.c)
+
+        return (True, t, hit_point, normal)
 
 
         # Didn't hit the Quadradic
