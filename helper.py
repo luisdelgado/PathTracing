@@ -31,6 +31,9 @@ class Read():
     def seed(self,  values):
         return self.__get_float(values)
 
+    def deepth(self,  values):
+        return self.__get_int(values)
+
     def object(self, values):
         """
         :param values:
@@ -40,16 +43,18 @@ class Read():
         vertices = self.__get_vertices(values[0])
         faces = self.__get_faces(values[0])
 
-        cor = Vector3D(float(values[1]),
+        cor = RGBColour(float(values[1]),
                float(values[2]),
                float(values[3]))
 
         # Demais propriedades do objeto
-        ka = values[4]
-        kd = values[5]
-        ks = values[6]
-        kt = values[7]
-        n = values[8]
+        ka = float(values[4])
+        kd = float(values[5])
+        ks = float(values[6])
+        kt = float(values[7])
+        n = int(values[8])
+        trans_difusa = float(values[9])
+        trans_especular = float(values[10])
 
         obj_list = []
 
@@ -58,9 +63,8 @@ class Read():
             B = vertices[f[1] - 1]
             C = vertices[f[2] - 1]
 
-            obj = Objeto(A,B,C, cor, ka, kd, ks, kt, n)
+            obj = Objeto(A, B, C, cor, ka, kd, ks, kt, n, trans_difusa, trans_especular)
             obj_list.append(obj)
-
 
         return obj_list
 
@@ -70,7 +74,7 @@ class Read():
         faces = self.__get_faces(values[0])
 
         # Cor e intensidade da luz
-        color = RGBColour(values[1], values[2], values[3])
+        color = RGBColour(float(values[1]), float(values[2]), float(values[3]))
         lp = float(values[4])
 
         light_list = []
@@ -86,7 +90,36 @@ class Read():
         return light_list
 
     def objectquadric(self, values):
-        print(values)
+        # Obtendo os vertices e faces que se encontram em arquivos separdos
+
+        a = float(values[0])
+        b = float(values[1])
+        c = float(values[2])
+        d = float(values[3])
+        e = float(values[4])
+        f = float(values[5])
+        g = float(values[6])
+        h = float(values[7])
+        j = float(values[8])
+        k = float(values[9])
+
+        # Lendo Cor
+        cor = RGBColour(float(values[10]),
+               float(values[11]),
+               float(values[12]))
+
+        # Demais propriedades do objeto
+        ka = float(values[13])
+        kd = float(values[14])
+        ks = float(values[15])
+        kt = float(values[16])
+        n = int(values[17])
+        trans_difusa = float(values[18])
+        trans_especular = int(values[19])
+
+        quad = Objeto(a, b, c, d, e, f, g, h, j, k, cor, ka, kd, ks, kt, n, trans_difusa, trans_especular)
+
+        return quad
 
     # Retorna a string contendo o nome do arquivo de saida
     def output(self,values):
@@ -150,6 +183,11 @@ class Read():
         fst = value[0]
 
         return float(fst)
+
+    def __get_int(self, value):
+        fst = value[0]
+
+        return int(fst)
 
 # Checa o time e designa a função para retornar o valor formatado
 def read(t, values):

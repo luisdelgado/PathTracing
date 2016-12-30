@@ -6,7 +6,8 @@
 #########################################
 
 # Modules
-from math import sqrt
+from math import sqrt, cos, sin
+
 
 # -------------------------------------------------Vector3D class
 class Vector3D:
@@ -52,10 +53,12 @@ def Length(v):
 def Normalize(v):
     return v * (1.0 / Length(v))
 
+
+
 # Return the normal vector from a triangule
 def Normal(a, b, c):
-    v = a - b
-    s = a - c
+    v = b - a
+    s = c - a
 
     # Cross Product - Normal vector
     normal = Cross(v, s)
@@ -63,14 +66,86 @@ def Normal(a, b, c):
     # Normalize normal vector
     return Normalize(normal)
 
+# flip direction
+def flip_direction(vector=Vector3D(0,0,0)):
+    return vector * -1.0
 
-# Return normal that is pointing on the side as the passed direction
-def orient_normal(normal, direction):
-    if Dot(normal, direction) < 0.0:
-        return normal * -1.0  # flip normal
-    else:
-        return normal
+def sample_direction(u1, u2):
+    z = pow(1.0 - u1, 1.0 / 1.0)
 
+    phi = 6.24 * u2  # Azimuth
+    theta = sqrt(max(0.0, 1.0 - z * z))
+
+    p = Vector3D
+    p.x = theta * cos(phi)
+    p.y = theta * sin(phi)
+    p.z = z
+
+    return p
+
+def random_direction(u1, u2, normal):
+    p = sample_direction(u1, u2) #random point on hemisphere
+
+    #create orthonormal basis around normal
+    w = normal
+    v = Cross(Vector3D(0.00319, 1.0, 0.0078), w) #jittered up
+    v = Normalize(v) #normalize
+    u = Cross(v, w)
+
+    hemi_dir = (u * p.x) + (v * p.y) + (w * p.z) #linear projection
+    return Normalize(hemi_dir)
+
+
+def Parallelogram_Area(A, B, P):
+    v = B - A
+    s = P - A
+
+    cross = Cross(v, s)
+
+    return Dot(v, s)
+
+def local_color(obj, hit_normal, ray, ambient):
+    # Iluminação do objeto
+    color = obj.color
+
+    # Iluminação ambiente
+    ia = ambient * float(obj.ka)
+    color = color + (RGBColour(ia, ia, ia))
+
+    # Iluminação difusa
+    p1 = Normalize(flip_direction(ray.d))
+    p2 = hit_normal
+
+    if (Length(p1) != 1):
+        p1 = Normalize(p1)
+
+    if (Length(hit_normal) != 1):
+        p2 = Normalize(hit_normal)
+
+    lv = 1.0 * float(obj.kd) * Dot(p1, p2)
+
+    color = color + (RGBColour(lv, lv, lv))
+
+    # Iluminação especular
+    p1 = Vector3D(p1.x * (-1), p1.y, p1.z)
+    p2 = ray.o
+
+    if (Length(p1) != 1):
+        p1 = Normalize(p1)
+
+    if (Length(ray.o) != 1):
+        p2 = Normalize(ray.o)
+
+    lv = 1.0 * float(obj.ks) * pow(Dot(p1, p2), float(obj.n))
+
+    color = color + (RGBColour(lv, lv, lv))
+
+    return color
+
+def tonemapping(pixel, tmapping):
+    pixel.r = pixel.r / (pixel.r + tmapping)
+    pixel.g = pixel.g / (pixel.g + tmapping)
+    pixel.b = pixel.b / (pixel.b + tmapping)
 
 # -------------------------------------------------Ray class
 class Ray:
@@ -121,8 +196,14 @@ class RGBColour:
         if (self.b > maximum): self.b = maximum
         if (self.b < minimum): self.b = minimum
 
+    def repr(self):
+        return "RGBColour ({},{},{})".format(self.r, self.g, self.b)
+
+
+
+
 
 # Constants
 BLACK = RGBColour(0.0, 0.0, 0.0)
 WHITE = RGBColour(1.0, 1.0, 1.0)
-RED = RGBColour(1.0, 0.0, 0.0)  # for testing
+RED = RGBColour(1.0, 0.0, 0.0)
