@@ -1,5 +1,5 @@
 from Algebra import RGBColour
-from Algebra import BLACK, Vector3D, Cross, Normalize, Length, Dot, local_color, Ray, flip_direction, random_direction
+from Algebra import BLACK, Vector3D, Cross, Normalize, Length, Dot, local_color, Ray, flip_direction, random_direction, WHITE
 from objetos import Objeto, Light, ObjectQuadric
 import random
 from math import pow
@@ -20,7 +20,7 @@ class PathTraceIntegrator:
         especular = BLACK
 
         # Checando interseções com cada objeto
-        dist = 50
+        dist = 100
         hit = False
         objeto = 1
         hit_point = Vector3D(0.0, 0.0, 0.0)
@@ -38,33 +38,36 @@ class PathTraceIntegrator:
                 hit_point = inter[2]
                 normal = inter[3]
 
-        if hit:
-            result = local_color(objeto, normal, ray, self.ambient)
+        if hit: ## Se o raio bateu no objeto calculamos a cor do ponto
+            if isinstance(objeto, Light):
+                return objeto.color
+            else:
+                result = local_color(objeto, normal, ray, self.ambient)
         else:
             return self.background
 
-        if depth == 0 or isinstance(objeto, Light):
-                return result
 
         # Calculando os Raios Secúndarios
         ktot = obj.kd + obj.ks + obj.kt
         aleatorio = random.random()*ktot
 
-        if aleatorio < obj.kd:                            ## Raio Difuso
-            x = random.random()
-            y = random.random()
-            dir = random_direction(x, y, normal)
 
-            new_ray = Ray(hit_point, Normalize(dir))
-            difuso = self.trace_ray(new_ray, depth - 1)
-        elif aleatorio < obj.kd + obj.ks:        #         ## Raio especular
-            L = Normalize(flip_direction(ray.d))
-            N = objeto.normal
-            R = (N * (Dot(N, L)) - L) * 2.0
+        if depth > 0:
+            if aleatorio < obj.kd:                            ## Raio Difuso
+                x = random.random()
+                y = random.random()
+                dir = random_direction(x, y, normal)
 
-            new_ray = Ray(hit_point, Normalize(R))
-            especular = self.trace_ray(new_ray, depth - 1)
-        else:                                               ## Raio Transmitido
-            pass
+                new_ray = Ray(hit_point, Normalize(dir))
+                difuso = self.trace_ray(new_ray, depth - 1)
+            elif aleatorio < obj.kd + obj.ks:        #         ## Raio especular
+                L = Normalize(flip_direction(ray.d))
+                N = objeto.normal
+                R = (N * (Dot(N, L)) - L) * 2.0
+
+                new_ray = Ray(hit_point, Normalize(R))
+                especular = self.trace_ray(new_ray, depth - 1)
+            else:                                               ## Raio Transmitido
+                pass
 
         return result + difuso*objeto.trans_difusa + especular*objeto.trans_especular

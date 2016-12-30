@@ -74,7 +74,7 @@ class Read():
         faces = self.__get_faces(values[0])
 
         # Cor e intensidade da luz
-        color = RGBColour(values[1], values[2], values[3])
+        color = RGBColour(float(values[1]), float(values[2]), float(values[3]))
         lp = float(values[4])
 
         light_list = []
