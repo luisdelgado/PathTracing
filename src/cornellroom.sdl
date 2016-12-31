@@ -16,7 +16,7 @@ light luzcornell.obj 1.0 1.0 1.0 1.0
 
 npaths 30
 deepth 5
-tonemapping 10
+tonemapping 1.0
 seed 9
 
 # Aqui comeca a definicao das geometrias
