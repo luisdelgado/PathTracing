@@ -49,7 +49,7 @@ FILENAME = str(prop_dict['output'])
 #Create Camera
 eye = Vector3D(prop_dict['eye'][0], prop_dict['eye'][1], prop_dict['eye'][2]) #higher z = more narrow view
 focal = Vector3D(0.0, 0.0, 0.0)
-view_distance = 1000
+view_distance = 600
 up = Vector3D(0.0, 1.0, 0.0)
 height = int(prop_dict['size'][0])
 width = int(prop_dict['size'][1])
