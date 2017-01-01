@@ -2,8 +2,10 @@ from Algebra import RGBColour
 from Algebra import BLACK, Vector3D, Cross, Normalize, Length, Dot, local_color, Ray, flip_direction, random_direction, WHITE
 from objetos import Objeto, Light, ObjectQuadric
 import random
+from math import sqrt
 from math import pow
 
+nRefractedInitial = 1.33
 
 class PathTraceIntegrator:
     background = BLACK # Cor do Background
@@ -18,6 +20,8 @@ class PathTraceIntegrator:
     def trace_ray(self, ray, depth):
         difuso = BLACK
         especular = BLACK
+        refletido = BLACK
+        transmitido = BLACK
 
         # Checando interseções com cada objeto
         dist = 100
@@ -68,6 +72,26 @@ class PathTraceIntegrator:
                 new_ray = Ray(hit_point, Normalize(R))
                 especular = self.trace_ray(new_ray, depth - 1)
             else:                                               ## Raio Transmitido
-                pass
+                L = Normalize(flip_direction(ray.d))
+                N = objeto.normal
+                if Length(N) != 1:
+                    N = Normalize(N)
+                cos1 = Dot(N, L)
+                refletido = L + (N * (2 * cos1))
+                new_rayReflected = Ray(hit_point, Normalize(refletido))
+                refletido = self.trace_ray(new_rayReflected, depth - 1)
+                if (objeto.kt > 0):
+                    delta = 1-((pow(1.33/objeto.kt,2))*(1-(pow(cos1,2))))
+                    if (delta >= 0):
+                        cos2 = sqrt(delta)
 
-        return result + difuso * objeto.kd + especular * objeto.ks
+                        divisao = self.nRefractedInitial / objeto.kt
+                        self.nRefractedInitial = objeto.kt
+                        if (cos1 > 0) :
+                            transmitido = (divisao * L) + (((divisao * cos1) - cos2) * N)
+                        else:
+                            transmitido = (divisao * L) + (((divisao * cos1) + cos2) * N)
+                        new_ray = Ray(hit_point, Normalize(transmitido))
+                        transmitido = self.trace_ray(new_ray, depth-1)
+
+        return result + difuso * objeto.kd + especular * objeto.ks + refletido + transmitido * objeto.kt

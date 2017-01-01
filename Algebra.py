@@ -6,11 +6,14 @@
 #########################################
 
 # Modules
-from math import sqrt, cos, sin
+from math import sqrt, cos, sin, cos
+from random import uniform
 
+PI = 3.1415926535897932384
 
 # -------------------------------------------------Vector3D class
 class Vector3D:
+
     # Initializer
     def __init__(self, x_element, y_element, z_element):
         self.x = x_element
@@ -73,8 +76,14 @@ def flip_direction(vector=Vector3D(0,0,0)):
 def sample_direction(u1, u2):
     z = pow(1.0 - u1, 1.0 / 1.0)
 
-    phi = 6.24 * u2  # Azimuth
-    theta = sqrt(max(0.0, 1.0 - z * z))
+    #phi = 6.24 * u2  # Azimuth
+    #theta = sqrt(max(0.0, 1.0 - z * z))
+
+    R1 = uniform(0,1)
+    R2 = uniform(0,1)
+
+    phi = 1/cos(R1)
+    theta = 2*PI*R2
 
     p = Vector3D
     p.x = theta * cos(phi)
@@ -143,13 +152,13 @@ def local_color(obj, hit_normal, ray, ambient):
     return color
 
 def tonemapping(pixel, tmapping):
-    if pixel.r > 1.0001 :
+    if 0.9999 < pixel.r > 1.0001 :
         pixel.r = pixel.r / (pixel.r + tmapping)
 
-    if pixel.g > 1.0001 :
+    if 0.9999 < pixel.g > 1.0001 :
         pixel.g = pixel.g / (pixel.g + tmapping)
 
-    if pixel.b > 1.0001 :
+    if 0.9999 < pixel.b > 1.0001 :
         pixel.b = pixel.b / (pixel.b + tmapping)
 
 # -------------------------------------------------Ray class

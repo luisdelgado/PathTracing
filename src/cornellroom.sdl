@@ -44,13 +44,13 @@ object back.obj 1.0 1.0 1.0 0.3 0.7 0 0 5
 object ceiling.obj 1.0 1.0 1.0 0.3 0.7 0 0 5
 
 # cube 1 WHITE
-object cube1.obj 1.0 1.0 1.0 0.3 0.7 0 0 5
+object cube1.obj 1.0 1.0 1.0 0.3 0.7 1 0 5
 
 # cube 2 WHITE
-object cube2.obj 1.0 1.0 1.0 0.3 0.7 0 0 5
+object cube2.obj 1.0 1.0 1.0 0.3 0.7 0 1 5
 
 # objectquadric RED a b c d e f g h j k red green blue ka kd ks kt n
-objectquadric 1.0 1.0 1.0 3.02 4.53 6.0 -2.02 -1.53 -19.0 5.0 1.0 0.0 0.0 1.0 1.0 1.0 1.0 5
+# bjectquadric 1 1 1 0 0 0 0 5 10 -200 1.0 0.0 0.0 1.0 1.0 1.0 1.0 5
 
 output cornell.pnm
 
