@@ -112,12 +112,15 @@ class Read():
         ks = float(values[15])
         kt = float(values[16])
         n = int(values[17])
-        trans_difusa = float(values[18])
-        trans_especular = int(values[19])
 
-        quad = Objeto(a, b, c, d, e, f, g, h, j, k, cor, ka, kd, ks, kt, n, trans_difusa, trans_especular)
-
-        return quad
+        # escrevi só pra não dá erro no arquivo de leitura
+        A = Vector3D(d - g, 0.0, 0.0)
+        B = Vector3D(0.0, e - h, 0.0)
+        C = Vector3D(0.0, 0.0, f - j)
+        quad_list = []
+        quad = Objeto(A, B, C, cor, ka, kd, ks, kt, n)
+        quad_list.append(quad)
+        return quad_list
 
     # Retorna a string contendo o nome do arquivo de saida
     def output(self,values):

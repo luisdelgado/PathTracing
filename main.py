@@ -12,7 +12,7 @@ print("Lendo Arquivos de configuração e Objetos")
 file = ".\src\cornellroom.sdl"
 DIRECTORY = './' # alterar de acordo com computador
 
-obj_types_list = ['object','quad', 'light']
+obj_types_list = ['object','quad', 'light', 'objectquadric']
 prop_types_list = ['eye', 'size', 'ortho', 'background', 'ambient', 'tonemapping', 'npaths', 'seed', 'output', 'deepth']
 
 obj_list = []  # Lista de objetos a serem redenrizados
