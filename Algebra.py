@@ -76,14 +76,14 @@ def flip_direction(vector=Vector3D(0,0,0)):
 def sample_direction(u1, u2):
     z = pow(1.0 - u1, 1.0 / 1.0)
 
-    #phi = 6.24 * u2  # Azimuth
-    #theta = sqrt(max(0.0, 1.0 - z * z))
+    phi = 6.24 * u2  # Azimuth
+    theta = sqrt(max(0.0, 1.0 - z * z))
 
     R1 = uniform(0,1)
     R2 = uniform(0,1)
 
-    phi = 1/cos(R1)
-    theta = 2*PI*R2
+    #phi = 1/cos(sqrt(R1))
+    #theta = 2*PI*R2
 
     p = Vector3D
     p.x = theta * cos(phi)

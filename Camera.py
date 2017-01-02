@@ -93,7 +93,7 @@ class Camera:
                     sp_x = (x + random()) - (self.width / 2.0)
                     sp_y = (y + random()) - (self.height / 2.0)
                     ray.d = self.get_direction(sp_x, sp_y)
-                    pixel = pixel + integrator.trace_ray(ray, depth)
+                    pixel = pixel + integrator.trace_ray(ray, depth, 1.0)
                 pixel = pixel / self.spp
                 tonemapping(pixel, tmapping)
                 self.save_pixel(pixel, x, y)

@@ -5,8 +5,6 @@ import random
 from math import sqrt
 from math import pow
 
-nRefractedInitial = 1.33
-
 class PathTraceIntegrator:
     background = BLACK # Cor do Background
     ambient = 0.5
@@ -17,11 +15,12 @@ class PathTraceIntegrator:
 
 
     #trace light path
-    def trace_ray(self, ray, depth):
+    def trace_ray(self, ray, depth, nRefractedInitial):
         difuso = BLACK
         especular = BLACK
         refletido = BLACK
         transmitido = BLACK
+        self.nRefractedInitial = nRefractedInitial
 
         # Checando interseções com cada objeto
         dist = 100
@@ -63,35 +62,35 @@ class PathTraceIntegrator:
                 dir = random_direction(x, y, normal)
 
                 new_ray = Ray(hit_point, Normalize(dir))
-                difuso = self.trace_ray(new_ray, depth - 1)
+                difuso = self.trace_ray(new_ray, depth - 1, objeto.kt)
             elif aleatorio < obj.kd + obj.ks:        #         ## Raio especular
                 L = Normalize(flip_direction(ray.d))
                 N = objeto.normal
                 R = (N * (Dot(N, L)) - L) * 2.0
 
                 new_ray = Ray(hit_point, Normalize(R))
-                especular = self.trace_ray(new_ray, depth - 1)
+                especular = self.trace_ray(new_ray, depth - 1, objeto.kt)
             else:                                               ## Raio Transmitido
-                L = Normalize(flip_direction(ray.d))
-                N = objeto.normal
-                if Length(N) != 1:
-                    N = Normalize(N)
-                cos1 = Dot(N, L)
-                refletido = L + (N * (2 * cos1))
-                new_rayReflected = Ray(hit_point, Normalize(refletido))
-                refletido = self.trace_ray(new_rayReflected, depth - 1)
                 if (objeto.kt > 0):
+                    L = Normalize(ray.d)
+                    N = objeto.normal
+                    if Length(N) != 1:
+                        N = Normalize(N)
+                    cos1 = Dot(N, flip_direction(L))
+                    refletido = L + (N * (2 * cos1))
+                    new_rayReflected = Ray(hit_point, Normalize(refletido))
+                    refletido = self.trace_ray(new_rayReflected, depth - 1, objeto.kt)
+
                     delta = 1-((pow(1.33/objeto.kt,2))*(1-(pow(cos1,2))))
                     if (delta >= 0):
                         cos2 = sqrt(delta)
-
-                        divisao = self.nRefractedInitial / objeto.kt
-                        self.nRefractedInitial = objeto.kt
+                        divisao = nRefractedInitial / objeto.kt
+                        nRefractedInitial = objeto.kt
                         if (cos1 > 0) :
-                            transmitido = (divisao * L) + (((divisao * cos1) - cos2) * N)
+                            transmitido = (L * divisao) + (N * ((divisao * cos1) - cos2))
                         else:
-                            transmitido = (divisao * L) + (((divisao * cos1) + cos2) * N)
+                            transmitido = (L * divisao) + (N * ((divisao * cos1) + cos2))
                         new_ray = Ray(hit_point, Normalize(transmitido))
-                        transmitido = self.trace_ray(new_ray, depth-1)
+                        transmitido = self.trace_ray(new_ray, depth-1, objeto.kt)
 
         return result + difuso * objeto.kd + especular * objeto.ks + refletido + transmitido * objeto.kt
