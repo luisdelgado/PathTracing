@@ -9,7 +9,7 @@ from PathTraceIntegrator import PathTraceIntegrator, RGBColour
 
 print("Lendo Arquivos de configuração e Objetos")
 
-file = ".\src\cornellroom.sdl"
+file = "./src/cornellroom.sdl"
 DIRECTORY = './' # alterar de acordo com computador
 
 obj_types_list = ['object','quad', 'light', 'objectquadric']
