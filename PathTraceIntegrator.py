@@ -65,10 +65,10 @@ class PathTraceIntegrator:
                 x = random.random()
                 y = random.random()
                 dir = random_direction(x, y, normal)
-                dir2 = Normalize(dir)
+                #dir2 = Normalize(dir)
 
                 # shadow ray
-                shadow_ray = Ray(Vector3D(dir2.x, dir2.y, dir2.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
+                shadow_ray = Ray(Vector3D(dir.x, dir.y, dir.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
                 for obj2 in self.obj_list:
                     inter2 = obj2.intersect(shadow_ray)
                     tmp_hit2 = inter2[0]
@@ -91,7 +91,7 @@ class PathTraceIntegrator:
                     else:
                         new_ray = Ray(hit_point, Normalize(dir))
                         difuso = self.trace_ray(new_ray, depth - 1, objeto.kt)
-                        #difuso = difuso * objeto.kt
+                        #difuso = difuso * objeto2.kt
                 else:
                     new_ray = Ray(hit_point, Normalize(dir))
                     difuso = self.trace_ray(new_ray, depth - 1, objeto.kt)
@@ -99,10 +99,10 @@ class PathTraceIntegrator:
                 L = Normalize(flip_direction(ray.d))
                 N = objeto.normal
                 R = (N * (Dot(N, L)) - L) * 2.0
-                R2 = Normalize(R)
+                #R2 = Normalize(R)
 
                 # shadow ray
-                shadow_ray = Ray(Vector3D(R2.x, R2.y, R2.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
+                shadow_ray = Ray(Vector3D(R.x, R.y, R.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
                 for obj2 in self.obj_list:
                     inter2 = obj2.intersect(shadow_ray)
                     tmp_hit2 = inter2[0]
@@ -125,7 +125,7 @@ class PathTraceIntegrator:
                     else:
                         new_ray = Ray(hit_point, Normalize(R))
                         especular = self.trace_ray(new_ray, depth - 1, objeto.kt)
-                        #especular = especular * objeto.kt
+                        #especular = especular * objeto2.kt
                 else:
                     new_ray = Ray(hit_point, Normalize(R))
                     especular = self.trace_ray(new_ray, depth - 1, objeto.kt)
@@ -137,16 +137,16 @@ class PathTraceIntegrator:
                         N = Normalize(N)
                     cos1 = Dot(N, flip_direction(L))
                     refletido = L + (N * (2 * cos1))
-                    refletido2 = Normalize(refletido)
+                    #refletido2 = Normalize(refletido)
 
                     # shadow ray
-                    shadow_ray = Ray(Vector3D(refletido2.x, refletido2.y, refletido2.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
+                    shadow_ray = Ray(Vector3D(refletido.x, refletido.y, refletido.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
                     for obj2 in self.obj_list:
                         inter2 = obj2.intersect(shadow_ray)
                         tmp_hit2 = inter2[0]
                         distance2 = inter2[1]
 
-                        if tmp_hit2 and distance < dist:
+                        if tmp_hit2 and distance2 < dist2:
                             dist2 = distance2
                             objeto2 = obj2
                             hit2 = tmp_hit2
@@ -163,7 +163,7 @@ class PathTraceIntegrator:
                         else:
                             new_rayReflected = Ray(hit_point, Normalize(refletido))
                             refletido = self.trace_ray(new_rayReflected, depth - 1, objeto.kt)
-                            #refletido = refletido * objeto.kt
+                            #refletido = refletido * objeto2.kt
                     else:
                         new_rayReflected = Ray(hit_point, Normalize(refletido))
                         refletido = self.trace_ray(new_rayReflected, depth - 1, objeto.kt)
@@ -175,19 +175,19 @@ class PathTraceIntegrator:
                         nRefractedInitial = objeto.kt
                         if (cos1 > 0) :
                             transmitido = (L * divisao) + (N * ((divisao * cos1) - cos2))
-                            transmitido2 = Normalize(transmitido)
+                            #transmitido2 = Normalize(transmitido)
                         else:
                             transmitido = (L * divisao) + (N * ((divisao * cos1) + cos2))
-                            transmitido2 = Normalize(transmitido)
+                            #transmitido2 = Normalize(transmitido)
 
                         # shadow ray
-                        shadow_ray = Ray(Vector3D(transmitido2.x, transmitido2.y, transmitido2.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
+                        shadow_ray = Ray(Vector3D(transmitido.x, transmitido.y, transmitido.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
                         for obj2 in self.obj_list:
                             inter2 = obj2.intersect(shadow_ray)
                             tmp_hit2 = inter2[0]
                             distance2 = inter2[1]
 
-                            if tmp_hit2 and distance < dist:
+                            if tmp_hit2 and distance2 < dist2:
                                 dist2 = distance2
                                 objeto2 = obj2
                                 hit2 = tmp_hit2
@@ -204,7 +204,7 @@ class PathTraceIntegrator:
                             else:
                                 new_ray = Ray(hit_point, Normalize(transmitido))
                                 transmitido = self.trace_ray(new_ray, depth - 1, objeto.kt)
-                                #transmitido = transmitido * objeto.kt
+                                #transmitido = transmitido * objeto2.kt
                         else:
                             new_ray = Ray(hit_point, Normalize(transmitido))
                             transmitido = self.trace_ray(new_ray, depth-1, objeto.kt)
