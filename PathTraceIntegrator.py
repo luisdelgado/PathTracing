@@ -21,19 +21,25 @@ class PathTraceIntegrator:
         refletido = BLACK
         transmitido = BLACK
         self.nRefractedInitial = nRefractedInitial
-        temLuz = 0
+        temLuz = 1
+        result = BLACK
 
         # Checando interseções com cada objeto
         dist = 100
         dist2 = 100
+        dist3 = 100
         hit = False
         hit2 = False
+        hit3 = False
         objeto = 1
         hit_point = Vector3D(0.0, 0.0, 0.0)
         hit_point2 = Vector3D(0.0, 0.0, 0.0)
+        hit_point3 = Vector3D(0.0, 0.0, 0.0)
         normal = Vector3D(0.0, 0.0, 0.0)
         normal2 = Vector3D(0.0, 0.0, 0.0)
+        normal3 = Vector3D(0.0, 0.0, 0.0)
         objeto2 = 0.0
+        objeto3 = 0.0
 
         for obj in self.obj_list:
             inter = obj.intersect(ray)
@@ -51,8 +57,77 @@ class PathTraceIntegrator:
             if isinstance(objeto, Light):
                 return objeto.color
             else:
-                result = local_color(objeto, normal, ray, self.ambient)
+                if depth == 2 :
+                    for l in range (0, 9):
+                        lx = random.uniform(-0.9100, 0.9100)
+                        lz = random.uniform(-23.3240, -26.4880)
+                        shadow_ray2 = Ray(Vector3D(hit_point.x, hit_point.y, hit_point.z), Vector3D(lx, 3.8360, lz))
+                        shadow_ray2.d = Vector3D(shadow_ray2.d.x - hit_point.x, shadow_ray2.d.y - hit_point.y,
+                                                 shadow_ray2.d.z - hit_point.z)
+                        shadow_ray2.d = Normalize(shadow_ray2.d)
+                        for obj3 in self.obj_list:
+                            inter3 = obj3.intersect(shadow_ray2)
+                            tmp_hit3 = inter3[0]
+                            distance3 = inter3[1]
+
+                            if tmp_hit3 and distance3 < dist3:
+                                dist3 = distance3
+                                objeto3 = obj3
+                                hit3 = tmp_hit3
+                                hit_point3 = inter3[2]
+                                normal3 = inter3[3]
+                                temLuz = 0
+                                if hit3:  ## Se o raio bateu no objeto calculamos a cor do ponto
+                                    if isinstance(objeto3, Light):
+                                        temLuz = 1
+
+                        if temLuz == 0.0:
+                            #if objeto.color == objeto3.color:
+                             #   result = local_color(objeto, normal, ray, self.ambient)
+                              #  break
+                            pass
+                        else:
+                            result = local_color(objeto, normal, ray, self.ambient)
+                            break
+                        if l == 19:
+                            difuso = BLACK
+                else:
+                    # shadow ray
+                    dist3 = 100
+                    hit3 = False
+                    hit_point3 = Vector3D(0.0, 0.0, 0.0)
+                    normal3 = Vector3D(0.0, 0.0, 0.0)
+                    objeto3 = 0.0
+                    lx = random.uniform(-0.9100, 0.9100)
+                    lz = random.uniform(-23.3240, -26.4880)
+                    shadow_ray3 = Ray(Vector3D(hit_point.x, hit_point.y, hit_point.z), Vector3D(lx, 3.8360, lz))
+                    shadow_ray3.d = Vector3D(shadow_ray3.d.x - hit_point.x, shadow_ray3.d.y - hit_point.y, shadow_ray3.d.z - hit_point.z)
+                    shadow_ray3.d = Normalize(shadow_ray3.d)
+                    for obj3 in self.obj_list:
+                        inter3 = obj3.intersect(shadow_ray3)
+                        tmp_hit3 = inter3[0]
+                        distance3 = inter3[1]
+
+                        if tmp_hit3 and distance3 < dist3:
+                            dist3 = distance3
+                            objeto3 = obj3
+                            hit3 = tmp_hit3
+                            hit_point3 = inter3[2]
+                            normal3 = inter3[3]
+                            temLuz = 0
+                            if hit3:  ## Se o raio bateu no objeto calculamos a cor do ponto
+                                if isinstance(objeto3, Light):
+                                    temLuz = 1
+
+                    if temLuz==0.0:
+                        #if objeto.color == objeto3.color:
+                         #   result = local_color(objeto, normal, ray, self.ambient)
+                        #else:
+                        difuso = BLACK
+                    else:
+                        result = local_color(objeto, normal, ray, self.ambient)
         else:
+
             return self.background
 
 
@@ -68,7 +143,12 @@ class PathTraceIntegrator:
                 #dir2 = Normalize(dir)
 
                 # shadow ray
-                shadow_ray = Ray(Vector3D(dir.x, dir.y, dir.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
+                lx = random.uniform(-0.9100, 0.9100)
+                lz = random.uniform(-23.3240, -26.4880)
+                shadow_ray = Ray(Vector3D(dir.x, dir.y, dir.z), Vector3D(lx, 3.8360, lz))
+                shadow_ray.d = Vector3D(shadow_ray.d.x - dir.x, shadow_ray.d.y - dir.y,
+                                         shadow_ray.d.z - dir.z)
+                shadow_ray.d = Normalize(shadow_ray.d)
                 for obj2 in self.obj_list:
                     inter2 = obj2.intersect(shadow_ray)
                     tmp_hit2 = inter2[0]
@@ -86,11 +166,10 @@ class PathTraceIntegrator:
                                 temLuz = 1
 
                 if temLuz==0:
-                    if objeto2.kt == 0.0:
-                        difuso = BLACK
-                    else:
-                        new_ray = Ray(hit_point, Normalize(dir))
-                        difuso = self.trace_ray(new_ray, depth - 1, objeto.kt)
+                    difuso = BLACK
+                    #else:
+                        #new_ray = Ray(hit_point, Normalize(dir))
+                        #difuso = self.trace_ray(new_ray, depth - 1, objeto.kt)
                         #difuso = difuso * objeto2.kt
                 else:
                     new_ray = Ray(hit_point, Normalize(dir))
@@ -102,7 +181,12 @@ class PathTraceIntegrator:
                 #R2 = Normalize(R)
 
                 # shadow ray
-                shadow_ray = Ray(Vector3D(R.x, R.y, R.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
+                lx = random.uniform(-0.9100, 0.9100)
+                lz = random.uniform(-23.3240, -26.4880)
+                shadow_ray = Ray(Vector3D(R.x, R.y, R.z), Vector3D(lx, 3.8360, lz))
+                shadow_ray.d = Vector3D(shadow_ray.d.x - R.x, shadow_ray.d.y - R.y,
+                                        shadow_ray.d.z - R.z)
+                shadow_ray.d = Normalize(shadow_ray.d)
                 for obj2 in self.obj_list:
                     inter2 = obj2.intersect(shadow_ray)
                     tmp_hit2 = inter2[0]
@@ -140,7 +224,12 @@ class PathTraceIntegrator:
                     #refletido2 = Normalize(refletido)
 
                     # shadow ray
-                    shadow_ray = Ray(Vector3D(refletido.x, refletido.y, refletido.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
+                    lx = random.uniform(-0.9100, 0.9100)
+                    lz = random.uniform(-23.3240, -26.4880)
+                    shadow_ray = Ray(Vector3D(refletido.x, refletido.y, refletido.z), Vector3D(lx, 3.8360, lz))
+                    shadow_ray.d = Vector3D(shadow_ray.d.x - refletido.x, shadow_ray.d.y - refletido.y,
+                                            shadow_ray.d.z - refletido.z)
+                    shadow_ray.d = Normalize(shadow_ray.d)
                     for obj2 in self.obj_list:
                         inter2 = obj2.intersect(shadow_ray)
                         tmp_hit2 = inter2[0]
@@ -181,7 +270,10 @@ class PathTraceIntegrator:
                             #transmitido2 = Normalize(transmitido)
 
                         # shadow ray
-                        shadow_ray = Ray(Vector3D(transmitido.x, transmitido.y, transmitido.z), Normalize(Vector3D(0.0000, 3.8360, -24.9060)))
+                        shadow_ray = Ray(Vector3D(transmitido.x, transmitido.y, transmitido.z), Vector3D(lx, 3.8360, lz))
+                        shadow_ray.d = Vector3D(shadow_ray.d.x - transmitido.x, shadow_ray.d.y - transmitido.y,
+                                                shadow_ray.d.z - transmitido.z)
+                        shadow_ray.d = Normalize(shadow_ray.d)
                         for obj2 in self.obj_list:
                             inter2 = obj2.intersect(shadow_ray)
                             tmp_hit2 = inter2[0]

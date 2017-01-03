@@ -118,8 +118,8 @@ def local_color(obj, hit_normal, ray, ambient):
     color = obj.color
 
     # Iluminação ambiente
-    ia = ambient * float(obj.ka)
-    color = color + (RGBColour(ia, ia, ia))
+    ia = BLACK
+    color = color + ia
 
     # Iluminação difusa
     p1 = Normalize(flip_direction(ray.d))
@@ -131,9 +131,14 @@ def local_color(obj, hit_normal, ray, ambient):
     if (Length(hit_normal) != 1):
         p2 = Normalize(hit_normal)
 
-    lv = 1.0 * float(obj.kd) * Dot(p1, p2)
+    angulo = Dot(p1, p2)
 
-    color = color + (RGBColour(lv, lv, lv))
+    if (angulo < 0) :
+        angulo * -1
+
+    lv = (obj.color) * (angulo * float(obj.kd))
+
+    color = color + lv
 
     # Iluminação especular
     p1 = Vector3D(p1.x * (-1), p1.y, p1.z)
