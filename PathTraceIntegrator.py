@@ -57,7 +57,7 @@ class PathTraceIntegrator:
             if isinstance(objeto, Light):
                 return objeto.color
             else:
-                if depth == 2 :
+                if depth == 1 :
                     for l in range (0, 9):
                         lx = random.uniform(-0.9100, 0.9100)
                         lz = random.uniform(-23.3240, -26.4880)
@@ -89,43 +89,9 @@ class PathTraceIntegrator:
                         else:
                             result = local_color(objeto, normal, ray, self.ambient)
                             break
-                        if l == 19:
-                            difuso = BLACK
                 else:
-                    # shadow ray
-                    dist3 = 100
-                    hit3 = False
-                    hit_point3 = Vector3D(0.0, 0.0, 0.0)
-                    normal3 = Vector3D(0.0, 0.0, 0.0)
-                    objeto3 = 0.0
-                    lx = random.uniform(-0.9100, 0.9100)
-                    lz = random.uniform(-23.3240, -26.4880)
-                    shadow_ray3 = Ray(Vector3D(hit_point.x, hit_point.y, hit_point.z), Vector3D(lx, 3.8360, lz))
-                    shadow_ray3.d = Vector3D(shadow_ray3.d.x - hit_point.x, shadow_ray3.d.y - hit_point.y, shadow_ray3.d.z - hit_point.z)
-                    shadow_ray3.d = Normalize(shadow_ray3.d)
-                    for obj3 in self.obj_list:
-                        inter3 = obj3.intersect(shadow_ray3)
-                        tmp_hit3 = inter3[0]
-                        distance3 = inter3[1]
+                    result = local_color(objeto, normal, ray, self.ambient)
 
-                        if tmp_hit3 and distance3 < dist3:
-                            dist3 = distance3
-                            objeto3 = obj3
-                            hit3 = tmp_hit3
-                            hit_point3 = inter3[2]
-                            normal3 = inter3[3]
-                            temLuz = 0
-                            if hit3:  ## Se o raio bateu no objeto calculamos a cor do ponto
-                                if isinstance(objeto3, Light):
-                                    temLuz = 1
-
-                    if temLuz==0.0:
-                        #if objeto.color == objeto3.color:
-                         #   result = local_color(objeto, normal, ray, self.ambient)
-                        #else:
-                        difuso = BLACK
-                    else:
-                        result = local_color(objeto, normal, ray, self.ambient)
         else:
 
             return self.background
